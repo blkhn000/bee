@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:spbee/data/words.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 
 class GamePage extends StatefulWidget {
   final String level;
@@ -18,6 +19,7 @@ class _GamePageState extends State<GamePage> {
   late List<String> currentWord;
   String userInput = '';
   bool isChecked = false;
+  final FlutterTts flutterTts = FlutterTts();
 
   @override
   void initState() {
@@ -89,11 +91,11 @@ class _GamePageState extends State<GamePage> {
               color: Colors.teal,
               splashRadius: 40,
               tooltip: 'Прослушать слово',
-              onPressed: () {
-                final soundPath = currentWord[1];
-                player.play(AssetSource(soundPath));
-                // _speakWord(currentWord);
-                print('Playing sound for: ${currentWord[1]}');
+              onPressed: () async {
+                await flutterTts.setLanguage("en-US");
+                await flutterTts.setPitch(1.0);
+                await flutterTts.speak(currentWord[0]);
+                print('Speaking word: ${currentWord[0]}');
               },
             ),
             const SizedBox(height: 30),
