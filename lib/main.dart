@@ -14,7 +14,7 @@ class SpellingBeeApp extends StatelessWidget {
     return MaterialApp(
       title: 'Білім бәйгесі',
       theme: ThemeData(
-        fontFamily: 'KazakFont', // подключим казахский шрифт позже
+        fontFamily: 'Atyp', // подключим казахский шрифт позже
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal),
         useMaterial3: true,
       ),
