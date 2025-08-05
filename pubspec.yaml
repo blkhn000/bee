@@ -33,3 +33,51 @@ flutter:
     # - assets/spelling/jun/
     # - assets/spelling/middle/
     # - assets/spelling/senior/
+
+
+  fonts:
+    - family: Atyp
+      fonts:
+        - asset: assets/fonts/atyp/AtypDisplay-Regular.ttf
+          style: normal
+          weight: 400
+        - asset: assets/fonts/atyp/AtypDisplay-Italic.ttf
+          style: italic
+          weight: 400
+        - asset: assets/fonts/atyp/AtypDisplay-Light.ttf
+          style: normal
+          weight: 300
+        - asset: assets/fonts/atyp/AtypDisplay-LightItalic.ttf
+          style: italic
+          weight: 300
+        - asset: assets/fonts/atyp/AtypDisplay-Medium.ttf
+          style: normal
+          weight: 500
+        - asset: assets/fonts/atyp/AtypDisplay-MediumItalic.ttf
+          style: italic
+          weight: 500
+        - asset: assets/fonts/atyp/AtypDisplay-Semibold.ttf
+          style: normal
+          weight: 600
+        - asset: assets/fonts/atyp/AtypDisplay-SemiboldItalic.ttf
+          style: italic
+          weight: 600
+        - asset: assets/fonts/atyp/AtypDisplay-Bold.ttf
+          style: normal
+          weight: 700
+        - asset: assets/fonts/atyp/AtypDisplay-BoldItalic.ttf
+          style: italic
+          weight: 700
+        - asset: assets/fonts/atyp/AtypDisplay-Bold.ttf
+          style: normal
+          weight: 800
+        - asset: assets/fonts/atyp/AtypDisplay-BoldItalic.ttf
+          style: italic
+          weight: 800
+        - asset: assets/fonts/atyp/AtypDisplay-Thin.ttf
+          style: normal
+          weight: 100
+        - asset: assets/fonts/atyp/AtypDisplay-ThinItalic.ttf
+          style: italic
+          weight: 100
+
