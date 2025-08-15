@@ -30,8 +30,12 @@ class WelcomePage extends StatelessWidget {
                           ),
                         ],
                         borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(32), // added rounding to top-left
-                          bottomLeft: Radius.circular(32), // added rounding to bottom-left
+                          topLeft: Radius.circular(
+                            32,
+                          ), // added rounding to top-left
+                          bottomLeft: Radius.circular(
+                            32,
+                          ), // added rounding to bottom-left
                         ),
                       ),
                       clipBehavior: Clip.antiAlias,
@@ -42,32 +46,36 @@ class WelcomePage extends StatelessWidget {
                     ),
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 32,
+                      ),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center, // changed to center alignment
+                        crossAxisAlignment:
+                            CrossAxisAlignment
+                                .center, // changed to center alignment
                         children: [
                           LayoutBuilder(
                             builder: (context, constraints) {
                               final isGrid = constraints.maxWidth > 600;
                               if (isGrid) {
                                 return Row(
-                                  crossAxisAlignment: CrossAxisAlignment.center, // center third element vertically
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment
+                                          .center, // center third element vertically
                                   children: [
                                     Expanded(
                                       child: Column(
-                                        children: [
-                                          buildCard1(),
-                                          buildCard2(),
-                                        ],
+                                        children: [buildCard1(), buildCard2()],
                                       ),
                                     ),
                                     SizedBox(width: 24),
                                     Expanded(
                                       child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center, // center third element horizontally
-                                        children: [
-                                          buildCard3(),
-                                        ],
+                                        mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .center, // center third element horizontally
+                                        children: [buildCard3()],
                                       ),
                                     ),
                                   ],
@@ -85,7 +93,9 @@ class WelcomePage extends StatelessWidget {
                           ),
                           const SizedBox(height: 32),
                           Align(
-                            alignment: Alignment.center, // ensure button stays centered
+                            alignment:
+                                Alignment
+                                    .center, // ensure button stays centered
                             child: Container(
                               width: 200,
                               height: 56,
@@ -94,7 +104,9 @@ class WelcomePage extends StatelessWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => const HomePage(), // Replace with your target page
+                                      builder:
+                                          (context) =>
+                                              const HomePage(), // Replace with your target page
                                     ),
                                   );
                                 },
@@ -164,25 +176,19 @@ class WelcomePage extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               '32 Сөздер (60m күн сайын)',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF64748B),
-              ),
+              style: TextStyle(fontSize: 14, color: Color(0xFF64748B)),
             ),
             const SizedBox(height: 16),
             Text(
               'Spelling Bee — балалар мен оқушыларға арналған заманауи білім сайысы.',
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xFF64748B),
-              ),
+              style: TextStyle(fontSize: 15, color: Color(0xFF64748B)),
             ),
             const SizedBox(height: 24),
             Align(
               alignment: Alignment.bottomRight,
               child: CircleAvatar(
-                radius: 22,
-                backgroundImage: AssetImage('assets/images/logo.jpg'),
+                radius: 40,
+                backgroundImage: AssetImage('assets/images/logo.jpeg'),
               ),
             ),
           ],
@@ -215,25 +221,19 @@ class WelcomePage extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               '12 Сөздер (60m күн сайын)',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF64748B),
-              ),
+              style: TextStyle(fontSize: 14, color: Color(0xFF64748B)),
             ),
             const SizedBox(height: 16),
             Text(
               'Spelling Bee — бұл қазақ және ағылшын тілдерінде емле мен дұрыс жазуды дамытуға бағытталған сайыстық форматтағы мобильді платформа.',
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xFF64748B),
-              ),
+              style: TextStyle(fontSize: 15, color: Color(0xFF64748B)),
             ),
             const SizedBox(height: 24),
             Align(
               alignment: Alignment.bottomRight,
               child: CircleAvatar(
-                radius: 22,
-                backgroundImage: AssetImage('assets/images/logo.jpg'),
+                radius: 40,
+                backgroundImage: AssetImage('assets/images/logo.jpeg'),
               ),
             ),
           ],
@@ -266,25 +266,19 @@ class WelcomePage extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               '16 Сөздер (120m күн сайын)',
-              style: TextStyle(
-                fontSize: 14,
-                color: Color(0xFF64748B),
-              ),
+              style: TextStyle(fontSize: 14, color: Color(0xFF64748B)),
             ),
             const SizedBox(height: 16),
             Text(
               'Біз — Қазақстандағы алғашқы Spelling Bee білім платформасымыз!',
-              style: TextStyle(
-                fontSize: 15,
-                color: Color(0xFF64748B),
-              ),
+              style: TextStyle(fontSize: 15, color: Color(0xFF64748B)),
             ),
             const SizedBox(height: 24),
             Align(
               alignment: Alignment.bottomRight,
               child: CircleAvatar(
-                radius: 22,
-                backgroundImage: AssetImage('assets/images/logo.jpg'),
+                radius: 40,
+                backgroundImage: AssetImage('assets/images/logo.jpeg'),
               ),
             ),
           ],

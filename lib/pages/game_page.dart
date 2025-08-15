@@ -1,4 +1,4 @@
-import 'dart:ui';
+// import 'dart:ui'; // Убираем для лучшей производительности
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:spbee/data/words.dart';
@@ -77,26 +77,8 @@ class _GamePageState extends State<GamePage> {
               ),
             ),
           ),
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  colors: [
-                    Colors.white.withOpacity(0.15),
-                    Colors.white.withOpacity(0.05),
-                  ],
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                ),
-              ),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
-                  color: Colors.transparent,
-                ),
-              ),
-            ),
-          ),
+          // Убираем BackdropFilter для лучшей производительности
+          Container(color: Colors.black.withValues(alpha: 0.1)),
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 32),
@@ -108,32 +90,57 @@ class _GamePageState extends State<GamePage> {
                     children: [
                       IconButton(
                         onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.arrow_back, color: Colors.white, size: 28),
-                      ),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            '${widget.level} — ${widget.round}',
-                            style: const TextStyle(
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white,
-                              shadows: [
-                                Shadow(blurRadius: 4, color: Colors.black26, offset: Offset(0, 2)),
-                              ],
-                            ),
-                          ),
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Colors.white,
+                          size: 28,
                         ),
                       ),
-                      const SizedBox(width: 48), // Balance the back button
+                      const Spacer(),
                     ],
                   ),
-                  const SizedBox(height: 40),
+                  const SizedBox(height: 20),
+                  // Logo
+                  Center(
+                    child: Container(
+                      width: 60,
+                      height: 60,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(12),
+                        child: Image.asset(
+                          'assets/images/logo.jpeg',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Center(
+                    child: Text(
+                      '${widget.level} — ${widget.round}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            blurRadius: 4,
+                            color: Colors.black26,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
                   // Hide the answer from user view in production
-                  // Text(
-                  //   currentWord[0],
-                  //   style: const TextStyle(fontSize: 12, color: Colors.blue),
-                  // ),
+                  Text(
+                    currentWord[0],
+                    style: const TextStyle(fontSize: 12, color: Colors.blue),
+                  ),
                   const Text(
                     'Listen and write the word',
                     style: TextStyle(
@@ -141,21 +148,26 @@ class _GamePageState extends State<GamePage> {
                       fontWeight: FontWeight.bold,
                       color: Colors.white,
                       shadows: [
-                        Shadow(blurRadius: 4, color: Colors.black26, offset: Offset(0, 2)),
+                        Shadow(
+                          blurRadius: 4,
+                          color: Colors.black26,
+                          offset: Offset(0, 2),
+                        ),
                       ],
                     ),
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 40),
                   Container(
+                    width: 80,
+                    height: 80,
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.15),
-                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.white.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(40),
                     ),
                     child: IconButton(
-                      icon: const Icon(Icons.volume_up_rounded, size: 60),
+                      icon: const Icon(Icons.volume_up_rounded, size: 40),
                       color: Colors.white,
-                      splashRadius: 40,
                       tooltip: 'Прослушать слово',
                       onPressed: () async {
                         await flutterTts.setLanguage("en-US");
@@ -177,118 +189,113 @@ class _GamePageState extends State<GamePage> {
                       decoration: InputDecoration(
                         hintText: 'Type here...',
                         filled: true,
-                        fillColor: Colors.white.withOpacity(0.95),
+                        fillColor: Colors.white.withValues(alpha: 0.95),
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(16),
+                          borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderSide: const BorderSide(color: Color(0xFF6366F1), width: 2),
-                          borderRadius: BorderRadius.circular(16),
+                          borderSide: const BorderSide(
+                            color: Color(0xFF6366F1),
+                            width: 2,
+                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 30),
-                  Container(
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: ElevatedButton.icon(
-                      onPressed: () {
-                        final isCorrect =
-                            userInput.trim().toLowerCase() ==
-                            currentWord[0].toLowerCase();
-                        if (isCorrect) {
-                          final filePath = 'sounds/next-level.mp3';
-                          player.play(AssetSource(filePath));
-                          // Show toast for correct answer with word and translation
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                children: [
-                                  const Icon(Icons.check_circle, color: Colors.white),
-                                  const SizedBox(width: 8),
-                                  Flexible(
-                                    child: Text(
-                                      '✅ Correct! ${currentWord[0]} — ${currentWord.length > 1 ? currentWord[1] : ""}',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              backgroundColor: Colors.green,
-                              duration: const Duration(seconds: 2),
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              margin: const EdgeInsets.all(16),
-                            ),
-                          );
-                          // Clear text field and load next word immediately
-                          _textController.clear();
-                          userInput = '';
-                          loadNewWord();
-                        } else {
-                          // Show toast for incorrect answer
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(
-                                children: [
-                                  const Icon(Icons.error, color: Colors.white),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    '❌ Incorrect! Try again',
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      final isCorrect =
+                          userInput.trim().toLowerCase() ==
+                          currentWord[0].toLowerCase();
+                      if (isCorrect) {
+                        final filePath = 'sounds/next-level.mp3';
+                        player.play(AssetSource(filePath));
+                        // Show toast for correct answer with word and translation
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(
+                                  Icons.check_circle,
+                                  color: Colors.white,
+                                ),
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    '✅ Correct! ${currentWord[0]} — ${currentWord.length > 1 ? currentWord[1] : ""}',
                                     style: const TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                     ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
-                                ],
-                              ),
-                              backgroundColor: Colors.red,
-                              duration: const Duration(seconds: 2),
-                              behavior: SnackBarBehavior.floating,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              margin: const EdgeInsets.all(16),
+                                ),
+                              ],
                             ),
-                          );
-                          final filePath = 'sounds/reject.mp3';
-                          player.play(AssetSource(filePath));
-                          // Clear text field after check
-                          _textController.clear();
-                          userInput = '';
-                        }
-                      },
-                      icon: const Icon(Icons.check),
-                      label: const Text('Check'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.transparent,
-                        foregroundColor: Colors.white,
-                        shadowColor: Colors.transparent,
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 32,
-                          vertical: 16,
-                        ),
-                        textStyle: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(16),
-                        ),
+                            backgroundColor: Colors.green,
+                            duration: const Duration(seconds: 2),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            margin: const EdgeInsets.all(16),
+                          ),
+                        );
+                        // Clear text field and load next word immediately
+                        _textController.clear();
+                        userInput = '';
+                        loadNewWord();
+                      } else {
+                        // Show toast for incorrect answer
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Row(
+                              children: [
+                                const Icon(Icons.error, color: Colors.white),
+                                const SizedBox(width: 8),
+                                Text(
+                                  '❌ Incorrect! Try again',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            backgroundColor: Colors.red,
+                            duration: const Duration(seconds: 2),
+                            behavior: SnackBarBehavior.floating,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            margin: const EdgeInsets.all(16),
+                          ),
+                        );
+                        final filePath = 'sounds/reject.mp3';
+                        player.play(AssetSource(filePath));
+                        // Clear text field after check
+                        _textController.clear();
+                        userInput = '';
+                      }
+                    },
+                    icon: const Icon(Icons.check),
+                    label: const Text('Check'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF6366F1),
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 32,
+                        vertical: 16,
+                      ),
+                      textStyle: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
