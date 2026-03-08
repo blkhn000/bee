@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:spbee/services/google_cloud_tts_service.dart';
 
 class TtsTestPage extends StatefulWidget {
   const TtsTestPage({super.key});
@@ -9,43 +9,27 @@ class TtsTestPage extends StatefulWidget {
 }
 
 class _TtsTestPageState extends State<TtsTestPage> {
-  late FlutterTts flutterTts;
+  late GoogleCloudTtsService ttsService;
   final TextEditingController controller = TextEditingController();
-  bool _isTtsInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _initializeTts();
-  }
-
-  void _initializeTts() {
-    flutterTts = FlutterTts();
-    _setupTts();
-  }
-
-  Future<void> _setupTts() async {
-    try {
-      await flutterTts.setLanguage("en-US");
-      await flutterTts.setSpeechRate(0.5);
-      await flutterTts.setPitch(1.0);
-      _isTtsInitialized = true;
-    } catch (e) {
-      print('TTS initialization error: $e');
-    }
+    ttsService = GoogleCloudTtsService();
   }
 
   Future<void> _speak() async {
-    if (!_isTtsInitialized) {
-      await _setupTts();
-    }
-
     final text = controller.text.trim();
     if (text.isNotEmpty) {
       try {
-        await flutterTts.speak(text);
+        await ttsService.speak(text);
       } catch (e) {
-        print('TTS speak error: $e');
+        if (!mounted) {
+          return;
+        }
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('TTS error: $e')));
       }
     }
   }
@@ -157,7 +141,7 @@ class _TtsTestPageState extends State<TtsTestPage> {
 
   @override
   void dispose() {
-    flutterTts.stop();
+    ttsService.dispose();
     controller.dispose();
     super.dispose();
   }

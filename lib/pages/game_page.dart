@@ -2,7 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:spbee/data/words.dart';
 import 'package:audioplayers/audioplayers.dart';
-import 'package:flutter_tts/flutter_tts.dart';
+import 'package:spbee/services/google_cloud_tts_service.dart';
 
 class GamePage extends StatefulWidget {
   final String level;
@@ -19,35 +19,17 @@ class _GamePageState extends State<GamePage> {
   late List<String> currentWord;
   String userInput = '';
   bool isChecked = false;
-  late FlutterTts flutterTts;
   late AudioPlayer audioPlayer;
+  late GoogleCloudTtsService ttsService;
   final TextEditingController _textController = TextEditingController();
-  bool _isTtsInitialized = false;
 
   @override
   void initState() {
     super.initState();
-    _initializeAudio();
+    audioPlayer = AudioPlayer();
+    ttsService = GoogleCloudTtsService();
     _initializeWords();
     loadNewWord();
-  }
-
-  void _initializeAudio() {
-    // Инициализируем аудио плееры один раз
-    audioPlayer = AudioPlayer();
-    flutterTts = FlutterTts();
-    _initializeTts();
-  }
-
-  Future<void> _initializeTts() async {
-    try {
-      await flutterTts.setLanguage("en-US");
-      await flutterTts.setPitch(1.0);
-      await flutterTts.setSpeechRate(0.5);
-      _isTtsInitialized = true;
-    } catch (e) {
-      print('TTS initialization error: $e');
-    }
   }
 
   void _initializeWords() {
@@ -81,15 +63,10 @@ class _GamePageState extends State<GamePage> {
   }
 
   Future<void> _speakWord() async {
-    if (!_isTtsInitialized) {
-      await _initializeTts();
-    }
-
     try {
-      await flutterTts.speak(currentWord[0]);
-      print('Speaking word: ${currentWord[0]}');
+      await ttsService.speak(currentWord[0]);
     } catch (e) {
-      print('TTS speak error: $e');
+      _showSnackBar('TTS error: $e', Colors.red, Icons.error);
     }
   }
 
@@ -323,7 +300,7 @@ class _GamePageState extends State<GamePage> {
   @override
   void dispose() {
     audioPlayer.dispose();
-    flutterTts.stop();
+    ttsService.dispose();
     _textController.dispose();
     super.dispose();
   }

@@ -15,7 +15,7 @@ dependencies:
   cupertino_icons: ^1.0.8
   animated_widgets: ^1.1.0
   audioplayers: ^6.5.0
-  flutter_tts: ^4.2.3
+  http: ^1.4.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -80,4 +80,3 @@ flutter:
         - asset: assets/fonts/atyp/AtypDisplay-ThinItalic.ttf
           style: italic
           weight: 100
-
