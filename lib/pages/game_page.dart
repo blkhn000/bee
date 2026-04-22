@@ -66,7 +66,11 @@ class _GamePageState extends State<GamePage> {
     try {
       await ttsService.speak(currentWord[0]);
     } catch (e) {
-      _showSnackBar('TTS error: $e', Colors.red, Icons.error);
+      _showSnackBar(
+        'Voice playback is unavailable on this device.',
+        Colors.red,
+        Icons.error,
+      );
     }
   }
 
@@ -187,7 +191,7 @@ class _GamePageState extends State<GamePage> {
                 Text(
                   '${widget.level} — ${widget.round}',
                   style: const TextStyle(
-                    fontSize: 20,
+                    fontSize: 25,
                     fontWeight: FontWeight.bold,
                     color: Colors.white,
                   ),
@@ -199,7 +203,7 @@ class _GamePageState extends State<GamePage> {
                 if (currentWord.isNotEmpty)
                   Text(
                     currentWord[0],
-                    style: const TextStyle(fontSize: 12, color: Colors.blue),
+                    style: const TextStyle(fontSize: 35, color: Colors.white),
                   ),
 
                 const SizedBox(height: 20),

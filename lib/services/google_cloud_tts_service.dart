@@ -2,13 +2,19 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import 'package:http/http.dart' as http;
 import 'package:spbee/config/app_config.dart';
 
 class GoogleCloudTtsService {
-  GoogleCloudTtsService({http.Client? client, AudioPlayer? player})
+  GoogleCloudTtsService({
+    http.Client? client,
+    AudioPlayer? player,
+    FlutterTts? nativeTts,
+  })
     : _client = client ?? http.Client(),
-      _player = player ?? AudioPlayer();
+      _player = player ?? AudioPlayer(),
+      _nativeTts = nativeTts ?? FlutterTts();
 
   static const String _apiKeyFromEnv = String.fromEnvironment(
     'GOOGLE_CLOUD_TTS_API_KEY',
@@ -22,7 +28,10 @@ class GoogleCloudTtsService {
 
   final http.Client _client;
   final AudioPlayer _player;
+  final FlutterTts _nativeTts;
   final Map<String, Uint8List> _audioCache = {};
+  bool _nativeTtsConfigured = false;
+  bool _preferNativeTts = false;
 
   String get _apiKey =>
       AppConfig.googleCloudTtsApiKey.isNotEmpty
@@ -40,37 +49,100 @@ class GoogleCloudTtsService {
       return;
     }
 
-    if (_apiKey.isEmpty) {
+    Object? cloudError;
+    if (_apiKey.isNotEmpty && !_preferNativeTts) {
+      try {
+        Uint8List audioBytes;
+        final cachedAudio = _audioCache[normalizedText];
+        if (cachedAudio != null) {
+          audioBytes = cachedAudio;
+        } else {
+          audioBytes = await _synthesize(normalizedText);
+          _audioCache[normalizedText] = audioBytes;
+        }
+
+        await _nativeTts.stop();
+        await _player.stop();
+        await _player.play(BytesSource(audioBytes, mimeType: 'audio/mpeg'));
+        return;
+      } catch (error) {
+        cloudError = error;
+        if (_isPermanentCloudError(error)) {
+          _preferNativeTts = true;
+        }
+      }
+    }
+
+    try {
+      await _speakWithNativeTts(normalizedText);
+    } catch (nativeError) {
+      final cloudMessage =
+          cloudError == null
+              ? _apiKey.isEmpty
+                  ? 'Google Cloud TTS API key is missing.'
+                  : 'Google Cloud TTS was skipped.'
+              : _describeError(cloudError);
+      final nativeMessage = _describeError(nativeError);
       throw StateError(
-        'Google Cloud TTS API key is missing. Run with '
-        '--dart-define=GOOGLE_CLOUD_TTS_API_KEY=YOUR_KEY.',
+        'Speech playback is unavailable. '
+        'Cloud TTS: $cloudMessage '
+        'Native TTS: $nativeMessage',
       );
     }
-
-    Uint8List audioBytes;
-    final cachedAudio = _audioCache[normalizedText];
-    if (cachedAudio != null) {
-      audioBytes = cachedAudio;
-    } else {
-      audioBytes = await _synthesize(normalizedText);
-      _audioCache[normalizedText] = audioBytes;
-    }
-
-    await _player.stop();
-    await _player.play(BytesSource(audioBytes, mimeType: 'audio/mpeg'));
   }
 
   Future<void> stop() async {
     await _player.stop();
+    await _nativeTts.stop();
   }
 
   void dispose() {
+    _nativeTts.stop();
     _player.dispose();
     _client.close();
   }
 
   String _normalizeText(String text) {
     return text.trim().replaceAll(RegExp(r'\s+'), ' ');
+  }
+
+  Future<void> _speakWithNativeTts(String text) async {
+    await _configureNativeTts();
+    await _player.stop();
+    await _nativeTts.stop();
+    final result = await _nativeTts.speak(text);
+    if (result is int && result != 1) {
+      throw StateError('Device TTS engine rejected the utterance.');
+    }
+  }
+
+  Future<void> _configureNativeTts() async {
+    if (_nativeTtsConfigured) {
+      return;
+    }
+
+    await _nativeTts.awaitSpeakCompletion(true);
+    await _nativeTts.setPitch(1.0);
+    await _nativeTts.setSpeechRate(0.45);
+
+    try {
+      await _nativeTts.setLanguage('en-GB');
+    } catch (_) {
+      await _nativeTts.setLanguage('en-US');
+    }
+
+    _nativeTtsConfigured = true;
+  }
+
+  bool _isPermanentCloudError(Object error) {
+    final message = _describeError(error).toLowerCase();
+    return message.contains('billing to be enabled') ||
+        message.contains('api key not valid') ||
+        message.contains('permission denied');
+  }
+
+  String _describeError(Object error) {
+    return error.toString().replaceFirst('Bad state: ', '').trim();
   }
 
   Future<Uint8List> _synthesize(String text) async {

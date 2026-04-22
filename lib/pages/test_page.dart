@@ -29,7 +29,11 @@ class _TtsTestPageState extends State<TtsTestPage> {
         }
         ScaffoldMessenger.of(
           context,
-        ).showSnackBar(SnackBar(content: Text('TTS error: $e')));
+        ).showSnackBar(
+          const SnackBar(
+            content: Text('Voice playback is unavailable on this device.'),
+          ),
+        );
       }
     }
   }
